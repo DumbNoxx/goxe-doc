@@ -1,0 +1,68 @@
+---
+title: A log Aggregator
+description: From thousands of lines to a single report. goxe processes your logs via Syslog/UDP to deliver only what matters, when it matters.
+template: splash 
+hero:
+  title: Log aggregation, simplified.
+  tagline: From thousands of lines to a single report. goxe processes your logs via 
+     <span
+      class="font-black text-transparent
+        bg-clip-text bg-linear-to-b
+        from-accent-700 to-accent-400
+        dark:from-accent-500 dark:to-accent-200"
+    >
+      Syslog/UDP
+    </span> to deliver only what matters, when it matters.
+  image:
+    file: /src/assets/goxe-white.webp
+  actions:
+    - text: Get Started
+      link: /getting-started/
+      icon: right-arrow
+    - text: View On GitHub
+      link: https://github.com/dumbnoxx/goxe
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import AboutGoxe from '/src/component/AboutGoxe.astro';
+import VersionBadge from "/src/component/VersionBadge.astro";
+
+<VersionBadge
+ className="absolute top-35 left-33 py-1.5 px-4
+  hover:bg-green-500/30 hover:border-green-400/40
+   hover:cursor-pointer transition-colors duration-150
+    rounded-xl"
+	href="https://github.com/DumbNoxx/goxe/releases/tag"
+	text="Latest Version"
+	 />
+
+<CardGrid stagger>
+	<Card title="Smart Aggregation" icon="puzzle">
+		Automatically normalize, lowercase, and aggregate identical logs. Strip timestamps and reduce duplication instantly.
+	</Card>
+	<Card title="Lightning Fast" icon="seti:vite">
+		Engineered for minimal allocations and maximum throughput. Process thousands of logs per second with microsecond latency.
+	</Card>
+	<Card title="Smart Filtering" icon="seti:code-search">
+		Configure pattern-based filters to exclude or include specific logs. Fine-grained control over what gets aggregated.
+	</Card>
+	<Card title="Thread-Safe" icon="setting">
+		Built with concurrency in mind. Safe operations across multiple worker threads with zero race conditions.
+	</Card>
+	<Card title="Burst Detection" icon="error">
+		Automatic detection of log bursts with configurable limits and thresholds. Prevent log explosion in your systems.
+	</Card>
+	<Card title="Hot Reloading" icon="rocket">
+		Update configuration files and see changes applied instantly. Zero downtime configuration updates.
+	</Card>
+</CardGrid>
+
+
+<AboutGoxe title="Presented by...">
+	<p class="text-center p-1" 
+	slot="footer">Goxe is a log reduction tool written in go. it normalizes, 
+	filters, and aggregates repeated messages. the result is less noise, 
+	lower bandwidth, and cheaper storage without losing visibility into recurring issues. </p>
+</AboutGoxe>

@@ -1,0 +1,145 @@
+---
+title: Getting Started
+description: Getting Started in Goxe
+---
+import { Tabs, TabItem, Steps, LinkButton, Aside } from '@astrojs/starlight/components';
+import ButtonDownload from "/src/component/ButtonDownload.astro"
+
+
+Goxe is a log reduction tool written in go. it normalizes, 
+filters, and aggregates repeated messages. the result is less noise, 
+lower bandwidth, and cheaper storage without losing visibility into recurring issues. 
+
+## How to get started?
+### Install Goxe
+First you need to install Goxe; you can install it from different sources.
+
+<Tabs>
+  <TabItem label="Go" icon='seti:go'>
+    <p>If you have Go installed. Recommended Option</p>
+    <Steps>
+      1. Run the following command to download and build the project:
+          ```bash title="Terminal" 
+            go install github.com/DumbNoxx/Goxe/cmd/goxe@latest 
+          ```
+          <p>Goxe is a standalone binary with no external dependencies just download and run.</p>
+      2. Verify the installation:
+          ```bash title="Terminal"
+            goxe -v
+            # v1.1.2
+          ```
+    
+    </Steps>
+   </TabItem>
+  <TabItem label="Linux" icon="linux">
+    <p>In Linux you have different ways to install it.</p>
+    <Tabs>
+      <TabItem label="Ubuntu/Debian">
+        <Steps>
+      1. Download the file corresponding to your PC architecture.
+          <ButtonDownload extension="deb" os="linux" architecture="amd" />
+          <ButtonDownload extension="deb" os="linux" architecture="arm" />
+
+      2. The next step would be to double-click or use:
+
+          ```bash title="Ubuntu Shell"
+          sudo apt install /path/to/Goxe_1.1.2_linux_amd64.deb # Or arm64
+          ```
+      3. Verify the installation:
+          ```bash title="Ubuntu Shell"
+          goxe -v
+          # v1.1.2 
+          ```
+          The latest version should be displayed.
+      4. Run goxe
+          ```bash title="Ubuntu Shell"
+          goxe
+          # Server listening on port: 1729
+          ```
+        </Steps>
+      </TabItem>
+      <TabItem label='Fedora/RedHat'>
+          <Steps>
+      1. Download the file corresponding to your PC architecture.
+          <ButtonDownload extension="rpm" os="linux" architecture="amd" />
+          <ButtonDownload extension="rpm" os="linux" architecture="arm" />
+
+      2. The next step would be to double-click or use:
+
+          ```bash title="Fedora Shell"
+          sudo dnf install /path/to/package_name.rpm
+          ```
+      3. Verify the installation:
+          ```bash title="Fedora Shell"
+          goxe -v
+          # v1.1.2 
+          ```
+          The latest version should be displayed.
+      4. Run goxe
+          ```bash title="Fedora Shell"
+          goxe
+          # Server listening on port: 1729
+          ```
+        </Steps>
+      </TabItem>
+      <TabItem label='Arch Linux/Manjaro'>
+      <p>In the case of Arch Linux you have two options temporarily</p>
+      <p>As with Ubuntu, Goxe isn't in the official repositories, but it is in the AUR.</p>
+        <Steps>
+      1. Choose the helper you use.
+          <Tabs>
+          <TabItem label='yay'>
+            ```bash title="Arch Shell"
+            yay -S goxe
+            ```
+          </TabItem>
+           <TabItem label='paru'>
+            ```bash title="Arch Shell"
+            paru -S goxe
+            ```
+          </TabItem>
+          <TabItem label='AUR (Pre-built)'>
+          <p>Goxe also has its pre-compiled binary in the AUR, so you can install it with paru or yay.</p>
+            ```bash title="Arch Shell"
+            yay -S goxe-bin
+            ```
+            <Aside>
+              If you use this version, remember to replace <code>goxe</code> with <code>goxe-bin</code> in the following steps.
+              Also, keep in mind that this version is already pre-compiled, so it will skip the build process entirely.
+            </Aside>
+          </TabItem>
+          </Tabs>
+      2. Confirm the installation.
+          <p>
+            Your AUR helper will automatically download the source code and compile it. 
+            Since <strong>Goxe</strong> has no external dependencies, the process is 
+            clean and fast. Simply press <code>Enter</code> when prompted for 
+            installation confirmations.
+          </p>
+      3. Verify the installation:
+          ```bash title="Arch Shell"
+          goxe -v
+          # v1.1.2 
+          ```
+          The latest version should be displayed.
+      4. Run goxe
+          ```bash title="Arch Shell"
+          goxe
+          # Server listening on port: 1729
+          ```
+        </Steps>
+      </TabItem>
+    </Tabs>
+     
+  </TabItem>
+   <p>You already have Goxe on your system; any bug reports or suggestions for improvement can be submitted through</p>
+        <LinkButton
+          href="https://github.com/DumbNoxx/goxe/issues/new"
+          variant="secondary"
+          icon="external"
+          iconPlacement="start"
+          >
+          Issues Repository
+        </LinkButton>
+</Tabs>
+

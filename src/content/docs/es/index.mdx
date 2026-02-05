@@ -1,0 +1,68 @@
+---
+title: Un agregador de registros
+description: De miles de líneas a un solo informe. goxe procesa tus registros vía Syslog/UDP para entregar solo lo importante, cuando importa.
+template: splash 
+hero:
+  title: Agregación de logs, simplificada.
+  tagline: De miles de líneas a un solo informe. goxe procesa tus registros vía 
+     <span
+      class="font-black text-transparent
+        bg-clip-text bg-linear-to-b
+        from-accent-700 to-accent-400
+        dark:from-accent-500 dark:to-accent-200"
+    >
+      Syslog/UDP
+    </span> para entregar solo lo que importa, cuando importa.
+  image:
+    file: /src/assets/goxe-white.webp
+  actions:
+    - text: Empezar
+      link: /es/getting-started/
+      icon: right-arrow
+    - text: Ver en GitHub
+      link: https://github.com/dumbnoxx/goxe
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import AboutGoxe from '/src/component/AboutGoxe.astro';
+import VersionBadge from "/src/component/VersionBadge.astro";
+
+<VersionBadge
+ className="absolute top-35 left-33 py-1.5 px-4
+  hover:bg-green-500/30 hover:border-green-400/40
+   hover:cursor-pointer transition-colors duration-150
+    rounded-xl"
+	href="https://github.com/DumbNoxx/goxe/releases/tag"
+	text="Última Versión"
+	 />
+
+<CardGrid stagger>
+    <Card title="Agregación Inteligente" icon="puzzle">
+        Normaliza, convierte a minúsculas y agrega registros idénticos automáticamente. Elimina marcas de tiempo y reduce la duplicación al instante.
+    </Card>
+    <Card title="Velocidad Rayo" icon="seti:vite">
+        Diseñado para una asignación de memoria mínima y un rendimiento máximo. Procesa miles de registros por segundo con latencia de microsegundos.
+    </Card>
+    <Card title="Filtrado Inteligente" icon="seti:code-search">
+        Configura filtros basados en patrones para excluir o incluir registros específicos. Control granular sobre qué se agrega.
+    </Card>
+    <Card title="Seguridad de Hilos" icon="setting">
+        Construido pensando en la concurrencia. Operaciones seguras a través de múltiples hilos de trabajo sin condiciones de carrera.
+    </Card>
+    <Card title="Detección de Ráfagas" icon="error">
+        Detección automática de ráfagas de registros con límites y umbrales configurables. Evita la explosión de logs en tus sistemas.
+    </Card>
+    <Card title="Recarga en Caliente" icon="rocket">
+        Actualiza los archivos de configuración y observa los cambios aplicados al instante. Actualizaciones de configuración sin tiempo de inactividad.
+    </Card>
+</CardGrid>
+
+
+<AboutGoxe title="Presentado por...">
+    <p class="text-center p-1" 
+    slot="footer">Goxe es una herramienta de reducción de logs escrita en Go. Normaliza, 
+    filtra y agrega mensajes repetidos. El resultado es menos ruido, 
+    menor ancho de banda y almacenamiento más barato sin perder visibilidad de los problemas recurrentes. </p>
+</AboutGoxe>
