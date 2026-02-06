@@ -9,7 +9,6 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "Goxe",
-
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/dumbnoxx/goxe' }],
 			defaultLocale: "root",
 			locales: {

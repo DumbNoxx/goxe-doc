@@ -1,0 +1,77 @@
+---
+title: Initial Goxe Configuration
+description: Explanation of how Goxe works
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Now that the binary is installed, it’s time to configure Goxe.  
+In this section, we’ll guide you through the steps required to make Goxe start processing your logs and reduce data noise.
+
+## Config.json
+### Basic configuration
+Goxe generates its configuration file in <code>$XDG_CONFIG_HOME/goxe</code>, which depending on your operating system may be <code>\~/.config/goxe</code>, <code>~/Library/Application Support/goxe</code>,
+or <code>%APPDATA%\goxe</code>.
+<br />
+The Goxe configuration file is a JSON file that defines how Goxe behaves. Below is a basic example of a `config.json` file:
+
+```json title="config.json"
+{
+  "port": 1729,
+  "idLog": "hostname",
+  "pattenersWords": [],
+  "generateLogsOptions": {
+    "generateLogsFile": false,
+    "hour": "00:00:00"
+  },
+  "webhookUrls": [],
+  "bursDetectionOptions": {
+    "limitBreak": 10 
+  },
+  "shipper": {
+    "address": "127.0.0.1:5045",
+    "flushInterval": 30,
+    "protocol": "tcp"
+  }
+}
+```
+
+### Field explanation
+- `port`: The port on which Goxe listens to receive logs.
+- `idLog`: The field used to identify logs, commonly set to the hostname or service name.
+- `pattenersWords`: A list of words ignored by Goxe while processing logs. This is useful for filtering out common noise that adds no value to summaries.
+- `generateLogsOptions`: Options related to log file generation, such as whether Goxe should generate log files and at what time.
+- `webhookUrls`: A list of webhooks to which Goxe sends alerts when a data burst is detected (currently supports Slack and Discord).
+- `bursDetectionOptions`: Options for detecting log spikes, such as the repeated entry threshold before considering it a burst.
+- `shipper`: Configuration for shipping processed logs to a specific destination, including address, flush interval, and protocol.
+
+### Customization
+You can customize each of these fields based on your specific needs.  
+For example, if you want Goxe to ignore certain common words in your logs, you can add them to the `pattenersWords` list.  
+If you want Goxe to send alerts to a Slack channel when a log burst is detected,
+you can add the Slack webhook URL to the `webhookUrls` list.
+
+<br />
+Once you’ve configured your `config.json`, you can start Goxe and it will begin processing your logs based on the rules you’ve defined.  
+Goxe supports hot reload, so any changes made to the configuration file are applied immediately without restarting the service.
+
+## Log file generation
+When Goxe starts for the first time, it creates a directory in <code>$XDG_CACHE_HOME/goxe</code> (depending on your operating system, this may be <code>\~/.cache/goxe</code>, <code>~/Library/Caches/goxe</code>
+or <code>%LOCALAPPDATA%\goxe\Cache</code>) where generated log files are stored.  
+This ensures that log files are not lost when enabling the <code>"generateLogsFile"</code> option in the configuration.
+
+<br />
+Goxe proactively creates this directory with the required permissions so performance is not impacted once the service is running.
+
+<br />
+Log files are generated in the cache directory as a backup of daily logs. These files are removed during system cleanups; since they live in the cache directory,
+there’s no need to worry about long-term storage (especially given their reduced size due to log aggregation),
+as the operating system manages disk space efficiently. Likewise, if this option is disabled in the configuration file,
+no log files will be generated.
+
+<Aside>
+Keep in mind that `generateLogsOptions.hour` uses the server’s local time where Goxe is running.  If your server is in a different time zone, log files may be generated at a different time than expected.
+</Aside>
+
+At this point, Goxe is fully configured and ready to process your system logs.  
+In the next section, we’ll walk you through how to send logs to Goxe so it can start reducing noise and generating intelligent summaries.

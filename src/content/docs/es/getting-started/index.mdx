@@ -1,11 +1,319 @@
 ---
-title: Empezando
-description: Empezando a usar Goxe
+title: Primeros Pasos
+description: Cómo empezar a usar Goxe
 ---
+import { Tabs, TabItem, Steps, LinkButton, Aside } from '@astrojs/starlight/components';
+import ButtonDownload from "/src/component/ButtonDownload.astro"
 
-Guides lead a user through a specific task they want to accomplish, often with a sequence of steps.
-Writing a good guide requires thinking about what your users are trying to do.
+Goxe está diseñado para transformar flujos de logs caóticos en datos accionables.
+En esta guía, configuraremos tu primer pipeline para que pases de miles de líneas repetitivas a un resumen inteligente,
+ optimizando tu almacenamiento desde el primer minuto.
 
-## Further reading
+## ¿Cómo empezar?
+### Instalar Goxe
+Primero necesitas instalar Goxe; puedes instalarlo desde diferentes fuentes.
 
-- Read [about how-to guides](https://diataxis.fr/how-to-guides/) in the Diátaxis framework
+<Tabs>
+  <TabItem label="Go" icon='seti:go'>
+    <p>Si tienes Go instalado. Opción recomendada.</p>
+    <Steps>
+      1. Ejecuta el siguiente comando para descargar y compilar el proyecto:
+          ```bash title="Terminal" 
+          go install github.com/DumbNoxx/Goxe/cmd/goxe@latest
+          ```
+          <p>Goxe es un binario independiente sin dependencias externas, solo descarga y ejecuta.</p>
+      2. Verifica la instalación:
+          ```bash title="Terminal"
+          goxe -v
+          # v1.1.2
+          ```
+      3. Ejecuta Goxe:
+          ```bash title="Terminal"
+          goxe
+          # Server listening on port: 1729
+          ```
+    
+    </Steps>
+   </TabItem>
+  <TabItem label="Linux" icon="linux">
+    <p>En Linux tienes diferentes formas de instalarlo.</p>
+    <Tabs>
+      <TabItem label="Ubuntu/Debian">
+        <Steps>
+      1. Descarga el archivo correspondiente a la arquitectura de tu PC.
+          <ButtonDownload extension="deb" os="linux" architecture="amd" />
+          <ButtonDownload extension="deb" os="linux" architecture="arm" />
+
+      2. El siguiente paso sería hacer doble clic o usar:
+
+          ```bash title="Ubuntu Shell"
+          sudo apt install /ruta/a/Goxe_1.1.2_linux_amd64.deb # O arm64
+          ```
+      3. Verifica la instalación:
+          ```bash title="Ubuntu Shell"
+          goxe -v
+          # v1.1.2 
+          ```
+          Debería mostrarse la última versión.
+      4. Ejecuta Goxe:
+          ```bash title="Ubuntu Shell"
+          goxe
+          # Server listening on port: 1729
+          ```
+        </Steps>
+      </TabItem>
+      <TabItem label='Fedora/RedHat'>
+          <Steps>
+      1. Descarga el archivo correspondiente a la arquitectura de tu PC.
+          <ButtonDownload extension="rpm" os="linux" architecture="amd" />
+          <ButtonDownload extension="rpm" os="linux" architecture="arm" />
+
+      2. El siguiente paso sería hacer doble clic o usar:
+
+          ```bash title="Fedora Shell"
+          sudo dnf install /ruta/a/Goxe_1.1.2_linux_amd64.rpm # O arm64
+          ```
+      3. Verifica la instalación:
+          ```bash title="Fedora Shell"
+          goxe -v
+          # v1.1.2 
+          ```
+          Debería mostrarse la última versión.
+      4. Ejecuta Goxe:
+          ```bash title="Fedora Shell"
+          goxe
+          # Server listening on port: 1729
+          ```
+        </Steps>
+      </TabItem>
+      <TabItem label='Arch Linux/Manjaro'>
+      <p>En el caso de Arch Linux tienes dos opciones temporalmente.</p>
+      <p>Al igual que con Ubuntu, Goxe no está en los repositorios oficiales, pero se encuentra en el AUR.</p>
+        <Steps>
+      1. Elige el asistente (helper) que utilices.
+          <Tabs>
+          <TabItem label='yay'>
+            ```bash title="Arch Shell"
+            yay -S goxe
+            ```
+          </TabItem>
+           <TabItem label='paru'>
+            ```bash title="Arch Shell"
+            paru -S goxe
+            ```
+          </TabItem>
+          <TabItem label='AUR (Pre-compilado)'>
+          <p>Goxe también tiene su binario pre-compilado en el AUR, por lo que puedes instalarlo con paru o yay.</p>
+            ```bash title="Arch Shell"
+            yay -S goxe-bin
+            ```
+            <Aside>
+              Si usas esta versión, recuerda reemplazar <code>goxe</code> con <code>goxe-bin</code> en los siguientes pasos. 
+              Además, ten en cuenta que esta versión ya está pre-compilada, por lo que omitirá el proceso de compilación.
+            </Aside>
+          </TabItem>
+          </Tabs>
+      2. Confirma la instalación.
+          <p>
+            Tu asistente de AUR descargará automáticamente el código fuente y lo compilará. 
+            Dado que <strong>Goxe</strong> no tiene dependencias externas, el proceso es 
+            limpio y rápido. Simplemente presiona <code>Enter</code> cuando se te soliciten 
+            confirmaciones de instalación.
+          </p>
+      3. Verifica la instalación:
+          ```bash title="Arch Shell"
+          goxe -v
+          # v1.1.2 
+          ```
+          Debería mostrarse la última versión.
+      4. Ejecuta Goxe:
+          ```bash title="Arch Shell"
+          goxe
+          # Server listening on port: 1729
+          ```
+        </Steps>
+      </TabItem>
+    <TabItem label='Otras distribuciones'>
+  <p>El binario pre-compilado está disponible para descarga directa en formato <code>.tar.gz</code>.</p>
+
+  <ButtonDownload extension="tar.gz" os="linux" architecture="amd" />
+  <ButtonDownload extension="tar.gz" os="linux" architecture="arm" />
+
+  <Steps>
+    1. Crea la carpeta de destino:
+
+        ```bash title="Terminal"
+        mkdir -p /destino/goxe
+        ```
+        <Aside>
+          Este directorio almacenará el binario extraído. El ejecutable se expondrá globalmente mediante un enlace simbólico.
+        </Aside>
+
+    2. Extrae el archivo:
+
+        ```bash title="Terminal"
+        tar -xzvf Goxe_1.1.2_linux_amd64.tar.gz -C /destino/goxe # O arm64
+        ```
+        <p>
+          Usa el mismo directorio que creaste en el paso anterior.
+        </p>
+    3. Haz que el binario sea ejecutable y crea un enlace simbólico:
+
+        ```bash title="Terminal"
+        chmod +x /destino/goxe/Goxe
+        sudo ln -s ~/destino/goxe/Goxe /usr/local/bin/goxe
+        ```
+        <Aside type='caution'>
+          La creación del enlace simbólico requiere permisos de <code>sudo</code>.
+        </Aside>
+
+    4. Ejecuta Goxe:
+
+        ```bash title="Terminal"
+        goxe
+        # Server listening on port: 1729
+        ```
+        <p>
+          El enlace simbólico te permite ejecutar <code>goxe</code> globalmente mientras mantienes el binario en su propio directorio.
+        </p>
+  </Steps>
+</TabItem>
+
+    </Tabs>
+     
+  </TabItem>
+<TabItem label="Windows" icon="seti:windows">
+  <p>En Windows, puedes descargar el binario pre-compilado en formato <code>.zip</code>.</p>
+
+  <ButtonDownload extension="zip" os="windows" architecture="amd" />
+  <ButtonDownload extension="zip" os="windows" architecture="arm" />
+
+  <Steps>
+    1. Extrae el archivo descargado en la ubicación de tu preferencia.
+
+    2. (Opcional) Agrega Goxe al PATH del sistema para acceso global:
+          - Abre el Menú de Inicio y busca "Variables de entorno".
+          - Selecciona "Editar las variables de entorno del sistema".
+          - Haz clic en "Variables de entorno".
+          - En "Variables del sistema", busca y selecciona la variable "Path", luego haz clic en "Editar".
+          - Haz clic en "Nuevo" y añade la ruta de la carpeta donde extrajiste Goxe.
+          - Haz clic en "Aceptar" para cerrar todos los cuadros de diálogo.
+  </Steps>
+
+  <Tabs>
+    <TabItem label="Símbolo del sistema">
+      <Steps>
+        1. Abre el Símbolo del sistema (CMD) y verifica la instalación:
+            ```cmd title="Command Prompt"
+            goxe -v
+            # v1.1.2
+            ```
+            Debería mostrarse la última versión.
+
+        2. Ejecuta Goxe:
+            ```cmd title="Command Prompt"
+            goxe
+            # Server listening on port: 1729
+            ```
+      </Steps>
+    </TabItem>
+
+    <TabItem label="PowerShell">
+      <p>Si prefieres usar PowerShell, sigue estos pasos para ejecutar Goxe:</p>
+      <Steps>
+        1. Abre PowerShell.
+
+        2. Navega al directorio donde extrajiste Goxe:
+            ```powershell title="PowerShell"
+            cd "C:\ruta\a\goxe"
+            ```
+
+        3. Ejecuta Goxe:
+            ```powershell title="PowerShell"
+            .\goxe.exe
+            # Server listening on port: 1729
+            ```
+      </Steps>
+    </TabItem>
+
+    <TabItem label="Explorador de archivos">
+      <p>También puedes ejecutar Goxe directamente desde el Explorador de archivos de Windows.</p>
+      <Steps>
+        1. Abre el Explorador de archivos.
+
+        2. Navega al directorio donde extrajiste Goxe.
+
+        3. Haz doble clic en el archivo <code>goxe.exe</code>.
+
+        4. Se abrirá una ventana de terminal y Goxe se iniciará:
+            ```text
+            Server listening on port: 1729
+            ```
+      </Steps>
+    </TabItem>
+  </Tabs>
+</TabItem>
+<TabItem label="MacOS" icon="apple">
+  <p>El binario pre-compilado está disponible para descarga directa en formato <code>.tar.gz</code>.</p>
+
+  <ButtonDownload extension="tar.gz" os="darwin" architecture="amd" />
+  <ButtonDownload extension="tar.gz" os="darwin" architecture="arm" />
+
+  <Steps>
+    1. Crea un directorio para el binario:
+
+        ```bash title="Terminal"
+        mkdir -p ~/goxe
+        ```
+
+        <Aside>
+          Este directorio almacenará el binario de Goxe. Se creará un enlace simbólico para el acceso global.
+        </Aside>
+
+    2. Extrae el archivo:
+
+        ```bash title="Terminal"
+        tar -xzvf Goxe_1.1.2_macos_amd64.tar.gz -C ~/goxe
+        ```
+
+    3. Haz que el binario sea ejecutable y expónlo globalmente:
+
+        ```bash title="Terminal"
+        chmod +x ~/goxe/Goxe
+        sudo ln -s ~/goxe/Goxe /usr/local/bin/goxe
+        ```
+
+        <Aside type="caution">
+          La creación del enlace simbólico requiere permisos de <code>sudo</code>.
+        </Aside>
+
+    4. Si macOS bloquea el binario, elimina el flag de cuarentena:
+
+        ```bash title="Terminal"
+        xattr -d com.apple.quarantine ~/goxe/Goxe
+        ```
+
+        <Aside>
+          Esto es necesario para binarios no firmados descargados de internet.
+        </Aside>
+
+    5. Ejecuta Goxe:
+
+        ```bash title="Terminal"
+        goxe
+        # Server listening on port: 1729
+        ```
+  </Steps>
+</TabItem>
+  
+
+   <p>¡Ya tienes Goxe en tu sistema! Cualquier reporte de error o sugerencia de mejora puede enviarse a través de:</p>
+        <LinkButton
+          href="https://github.com/DumbNoxx/goxe/issues/new"
+          variant="secondary"
+          icon="external"
+          iconPlacement="end"
+          >
+          Repositorio de Issues
+        </LinkButton>
+</Tabs>

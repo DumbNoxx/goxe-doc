@@ -1,0 +1,73 @@
+---
+title: Configuracion inicial de goxe
+description: Explicación sobre funcionamiento de goxe
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Ahora que el binario esta instalado, es hora de configurar goxe. 
+En esta sección, te guiaremos a través de los pasos para crear que goxe empiece a procesar tus logs y reducir el ruido de tus datos.
+
+## Config.json
+### Configuración básica
+Goxe genera el archivo de configuracion en el <code>$XDG_CONFIG_HOME/goxe</code>, el cual dependiendo de tu sistema operativo, puede ser <code>\~/.config/goxe</code>, <code>~/Library/Application Support/goxe</code>
+o <code>%APPDATA%\goxe</code>.
+<br />
+El archivo de configuración de goxe es un archivo JSON que define cómo se comporta Goxe. Aquí hay un ejemplo básico de un archivo `config.json`:
+```json title="config.json"
+{
+  "port": 1729,
+  "idLog": "hostname",
+  "pattenersWords": [],
+  "generateLogsOptions": {
+    "generateLogsFile": false,
+    "hour": "00:00:00"
+  },
+  "webhookUrls": [],
+  "bursDetectionOptions": {
+    "limitBreak": 10 
+  },
+  "shipper": {
+    "address": "127.0.0.1:5045",
+    "flushInterval": 30,
+    "protocol": "tcp"
+  }
+}
+```
+### Explicación de los campos
+- `port`: El puerto en el que Goxe escuchará para recibir los logs.
+- `idLog`: El campo que se utilizará para identificar los logs, comúnmente se utiliza el hostname o el nombre del servicio.
+- `pattenersWords`: Una lista de palabras que son ignoradas por Goxe al procesar los logs. Esto es útil para eliminar ruido de palabras comunes que no aportan valor a los resúmenes.
+- `generateLogsOptions`: Opciones relacionadas con la generación de logs, como si deseas que Goxe genere un archivo de logs y a qué hora hacerlo.
+- `webhookUrls`: Una lista de webhooks a las que Goxe enviará las alertas al momento de activarse una rafaga de datos (Soporte con Slack y Discord por el momento).
+- `bursDetectionOptions`: Opciones para la detección de picos en los logs, como el límite de entradas repetidas antes de considerarlo un pico.
+- `shipper`: Configuración para enviar los logs procesados a un destino específico, incluyendo la dirección, el intervalo de envío y el protocolo a utilizar.
+
+### Personalización
+Puedes personalizar cada uno de estos campos según tus necesidades específicas.
+Por ejemplo, si deseas que Goxe ignore ciertas palabras comunes en tus logs, puedes agregarlas a la lista `pattenersWords`. 
+Si quieres que Goxe envíe alertas a un canal de Slack cuando se detecte un pico en los logs,
+puedes agregar la URL del webhook de Slack a la lista `webhookUrls`.
+
+<br />
+Una vez que hayas configurado tu `config.json`, puedes iniciar Goxe y comenzará a procesar tus logs según las reglas que has definido.
+Goxe tiene hot reload, por lo que cualquier cambio que hagas en el archivo de configuración se aplicará inmediatamente sin necesidad de reiniciar el servicio.
+
+## Generación de archivos de log
+Goxe al iniciarse por primera vez, crea una carpeta en <code>$XDG_CACHE_HOME/goxe</code> (dependiendo de tu sistema operativo, puede ser <code>\~/.cache/goxe</code>, <code>~/Library/Caches/goxe</code>
+o <code>%LOCALAPPDATA%\goxe\Cache</code>) donde almacena los archivos de logs generados.
+Esto sucede para no perder al momento de activar la opción <code>"generateLogsFile"</code> dentro de la configuración. 
+No pierda tiempo generando la carpeta con los permisos necesarios, asi el rendimiento no se ve afectado al momento de que goxe ya este funcionando.
+
+<br />
+Los archivos son generados en la carpeta cache para un backup de los logs diarios. Estos archivos son borrados en cada limpieza del sistema, como estan en la carpeta cache,
+no es necesario preocuparse por el almacenamiento a largo plazo (ademas que ocuparian un tamaño considerable por la reducción de logs),
+ya que el sistema operativo se encarga de gestionar el espacio de almacenamiento de manera eficiente. De igual manera al tener desactivada esa opcion en el archivo de configuración no
+generara ningún archivo de log.
+
+<Aside>
+Tener en cuenta que `generateLogsOptions.hour` se toma en el horario del servidor donde se ejecuta Goxe, por lo que si tu servidor esta en una zona horaria diferente a la tuya,
+es posible que los archivos de log se generen en un horario diferente al que esperas.
+</Aside>
+
+Con esto ya tienes Goxe configurado y listo para procesar los logs de tu sistema. En la siguiente sección, te guiaremos a través de cómo enviar tus logs a Goxe para que pueda comenzar a reducir el ruido y generar resúmenes inteligentes.

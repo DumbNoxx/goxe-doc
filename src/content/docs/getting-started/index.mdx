@@ -5,10 +5,9 @@ description: Getting Started in Goxe
 import { Tabs, TabItem, Steps, LinkButton, Aside } from '@astrojs/starlight/components';
 import ButtonDownload from "/src/component/ButtonDownload.astro"
 
-
-Goxe is a log reduction tool written in go. it normalizes, 
-filters, and aggregates repeated messages. the result is less noise, 
-lower bandwidth, and cheaper storage without losing visibility into recurring issues. 
+Goxe transforms noisy log streams into actionable insights. 
+This guide will help you configure your first pipeline to collapse thousands of repetitive entries into smart summaries,
+cutting storage costs immediately.
 
 ## How to get started?
 ### Install Goxe
@@ -183,6 +182,131 @@ First you need to install Goxe; you can install it from different sources.
     </Tabs>
      
   </TabItem>
+<TabItem label="Windows" icon="seti:windows">
+  <p>In Windows, you can download the pre-compiled binary in <code>.zip</code> format.</p>
+
+  <ButtonDownload extension="zip" os="windows" architecture="amd" />
+  <ButtonDownload extension="zip" os="windows" architecture="arm" />
+
+  <Steps>
+    1. Extract the downloaded archive to your desired location.
+
+    2. (Optional) Add Goxe to your system PATH for global access:
+          - Open the Start Menu and search for "Environment Variables".
+          - Select "Edit the system environment variables".
+          - Click on "Environment Variables".
+          - Under "System variables", find and select the "Path" variable, then click "Edit".
+          - Click "New" and add the path to the directory where you extracted Goxe.
+          - Click "OK" to close all dialog boxes.
+  </Steps>
+
+  <Tabs>
+    <TabItem label="Command Prompt">
+      <Steps>
+        1. Open Command Prompt and verify the installation:
+            ```cmd title="Command Prompt"
+            goxe -v
+            # v1.1.2
+            ```
+            The latest version should be displayed.
+
+        2. Run Goxe:
+            ```cmd title="Command Prompt"
+            goxe
+            # Server listening on port: 1729
+            ```
+      </Steps>
+    </TabItem>
+
+    <TabItem label="PowerShell">
+      <p>If you prefer using PowerShell, follow these steps to run Goxe:</p>
+      <Steps>
+        1. Open PowerShell.
+
+        2. Navigate to the directory where you extracted Goxe:
+            ```powershell title="PowerShell"
+            cd "C:\path\to\goxe"
+            ```
+
+        3. Run Goxe:
+            ```powershell title="PowerShell"
+            .\goxe.exe
+            # Server listening on port: 1729
+            ```
+      </Steps>
+    </TabItem>
+
+    <TabItem label="File Explorer">
+      <p>You can also run Goxe directly from Windows File Explorer.</p>
+      <Steps>
+        1. Open File Explorer.
+
+        2. Navigate to the directory where you extracted Goxe.
+
+        3. Double-click the <code>goxe.exe</code> file.
+
+        4. A terminal window will open and Goxe will start:
+            ```text
+            Server listening on port: 1729
+            ```
+      </Steps>
+    </TabItem>
+  </Tabs>
+</TabItem>
+<TabItem label="MacOS" icon="apple">
+  <p>The pre-compiled binary is available for direct download in <code>.tar.gz</code> format.</p>
+
+  <ButtonDownload extension="tar.gz" os="darwin" architecture="amd" />
+  <ButtonDownload extension="tar.gz" os="darwin" architecture="arm" />
+
+  <Steps>
+    1. Create a directory for the binary
+
+        ```bash title="Terminal"
+        mkdir -p ~/goxe
+        ```
+
+        <Aside>
+          This directory will store the Goxe binary. A symbolic link will be created for global access.
+        </Aside>
+
+    2. Extract the archive
+
+        ```bash title="Terminal"
+        tar -xzvf Goxe_1.1.2_macos_amd64.tar.gz -C ~/goxe
+        ```
+
+    3. Make the binary executable and expose it globally
+
+        ```bash title="Terminal"
+        chmod +x ~/goxe/Goxe
+        sudo ln -s ~/goxe/Goxe /usr/local/bin/goxe
+        ```
+
+        <Aside type="caution">
+          Creating the symbolic link requires <code>sudo</code> permissions.
+        </Aside>
+
+    4. If macOS blocks the binary, remove the quarantine flag
+
+        ```bash title="Terminal"
+        xattr -d com.apple.quarantine ~/goxe/Goxe
+        ```
+
+        <Aside>
+          This is required for unsigned binaries downloaded from the internet.
+        </Aside>
+
+    5. Run Goxe
+
+        ```bash title="Terminal"
+        goxe
+        # Server listening on port: 1729
+        ```
+  </Steps>
+</TabItem>
+  
+
    <p>You already have Goxe on your system; any bug reports or suggestions for improvement can be submitted through.</p>
         <LinkButton
           href="https://github.com/DumbNoxx/goxe/issues/new"

@@ -29,13 +29,35 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 import AboutGoxe from '/src/component/AboutGoxe.astro';
 import VersionBadge from "/src/component/VersionBadge.astro";
 
-<VersionBadge
- className="absolute top-35 left-33 py-1.5 px-4
-  hover:bg-green-500/30 hover:border-green-400/40
-   hover:cursor-pointer transition-colors duration-150
-    rounded-xl"
-	href="https://github.com/DumbNoxx/goxe/releases/tag"
-	text="Última Versión"
+
+<div class="relative mt-0">
+	<VersionBadge
+		className="
+			gap-2
+			mb-6
+			sm:hidden
+			px-4 py-1.5
+			rounded-xl
+
+			text-sm font-medium
+
+		  hover:bg-green-500/30
+	 	 hover:border-green-400/40
+			transition-colors
+
+			sm:absolute
+			sm:left-6
+		"
+		href="https://github.com/DumbNoxx/goxe/releases/tag"
+		text="Última Versión"
+	/>
+</div>
+<VersionBadge 
+className="absolute hidden md:block top-35 left-33
+ py-1.5 px-4 hover:bg-green-500/30 hover:border-green-400/40
+  hover:cursor-pointer transition-colors duration-150 rounded-xl"
+   href="https://github.com/DumbNoxx/goxe/releases/tag"
+    text="Última Versión"
 	 />
 
 <CardGrid stagger>
