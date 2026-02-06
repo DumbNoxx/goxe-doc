@@ -20,13 +20,18 @@ First you need to install Goxe; you can install it from different sources.
     <Steps>
       1. Run the following command to download and build the project:
           ```bash title="Terminal" 
-            go install github.com/DumbNoxx/Goxe/cmd/goxe@latest 
+          go install github.com/DumbNoxx/Goxe/cmd/goxe@latest 
           ```
           <p>Goxe is a standalone binary with no external dependencies just download and run.</p>
-      2. Verify the installation:
+      2. Verify the installation
           ```bash title="Terminal"
-            goxe -v
-            # v1.1.2
+          goxe -v
+          # v1.1.2
+          ```
+      3. Run Goxe
+          ```bash title="Terminal"
+          goxe
+          # Server listening on port: 1729
           ```
     
     </Steps>
@@ -45,7 +50,7 @@ First you need to install Goxe; you can install it from different sources.
           ```bash title="Ubuntu Shell"
           sudo apt install /path/to/Goxe_1.1.2_linux_amd64.deb # Or arm64
           ```
-      3. Verify the installation:
+      3. Verify the installation
           ```bash title="Ubuntu Shell"
           goxe -v
           # v1.1.2 
@@ -67,9 +72,9 @@ First you need to install Goxe; you can install it from different sources.
       2. The next step would be to double-click or use:
 
           ```bash title="Fedora Shell"
-          sudo dnf install /path/to/package_name.rpm
+          sudo dnf install /path/to/Goxe_1.1.2_linux_amd64.rpm # Or arm64
           ```
-      3. Verify the installation:
+      3. Verify the installation
           ```bash title="Fedora Shell"
           goxe -v
           # v1.1.2 
@@ -129,15 +134,61 @@ First you need to install Goxe; you can install it from different sources.
           ```
         </Steps>
       </TabItem>
+    <TabItem label='Other Linux'>
+  <p>The pre-compiled binary is available for direct download in <code>.tar.gz</code> format.</p>
+
+  <ButtonDownload extension="tar.gz" os="linux" architecture="amd" />
+  <ButtonDownload extension="tar.gz" os="linux" architecture="arm" />
+
+  <Steps>
+    1. Create the destination folder
+
+        ```bash title="Terminal"
+        mkdir -p /destination/goxe
+        ```
+        <Aside>
+          This directory will store the extracted binary. The executable will be exposed globally using a symbolic link.
+        </Aside>
+
+    2. Extract the archive
+
+        ```bash title="Terminal"
+        tar -xzvf Goxe_1.1.2_linux_amd64.tar.gz -C /destination/goxe # Or arm64
+        ```
+        <p>
+          Use the same directory you created in the previous step.
+        </p>
+    3. Make the binary executable and create a symbolic link
+
+        ```bash title="Terminal"
+        chmod +x /destination/goxe/Goxe
+        sudo ln -s ~/destination/goxe/Goxe /usr/local/bin/goxe
+        ```
+        <Aside type='caution'>
+          Creating the symbolic link requires <code>sudo</code> permissions.
+        </Aside>
+
+    4. Run Goxe
+
+        ```bash title="Terminal"
+        goxe
+        # Server listening on port: 1729
+        ```
+        <p>
+          The symbolic link allows you to run <code>goxe</code> globally while keeping the binary in its own directory.
+        </p>
+  </Steps>
+</TabItem>
+
     </Tabs>
      
   </TabItem>
-   <p>You already have Goxe on your system; any bug reports or suggestions for improvement can be submitted through</p>
+   <p>You already have Goxe on your system; any bug reports or suggestions for improvement can be submitted through.</p>
         <LinkButton
           href="https://github.com/DumbNoxx/goxe/issues/new"
           variant="secondary"
           icon="external"
-          iconPlacement="start"
+          iconPlacement="end"
           >
           Issues Repository
         </LinkButton>
