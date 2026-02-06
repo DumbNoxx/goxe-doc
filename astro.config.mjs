@@ -5,7 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://goxe-docs.vercel.app",
+	site: "https://dumbnoxx.github.io/goxe-doc/",
 	integrations: [
 		starlight({
 			title: "Goxe",
