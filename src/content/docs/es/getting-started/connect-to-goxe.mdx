@@ -1,0 +1,116 @@
+---
+sidebar: 
+    order: 3
+title: Conectar a Goxe
+description: Guía para conectar tus aplicaciones a Goxe
+---
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Ahora que has configurado goxe, el siguiente paso es conectar tus aplicaciones o servicios para que envíen sus logs a goxe.
+Goxe escucha por defecto en el puerto UDP 1729, pero puedes cambiar esto en el archivo de configuración `config.json` si es necesario, asegúrate de que las aplicaciones que envían logs estén configuradas para usar el mismo puerto.
+## Configuración de aplicaciones para enviar logs a Goxe
+A continuación, se presentan ejemplos de cómo configurar algunas aplicaciones comunes para enviar sus logs a goxe.
+### Syslog (Linux)
+Si estás utilizando syslog en un sistema Linux, puedes agregar la siguiente línea a tu archivo de configuración de syslog (por ejemplo, `/etc/rsyslog.conf`):
+```plaintext title="rsyslog.conf"
+*.* @localhost:1729;RSYSLOG_SyslogProtocol23Format
+```
+Después de realizar este cambio, reinicia el servicio de syslog para que los cambios surtan efecto:
+```bash title="Terminal"
+sudo systemctl restart rsyslog
+``` 
+### Windows Event Log
+En Windows, puedes utilizar la herramienta `nxlog` para enviar eventos del registro de eventos a goxe. Aquí hay un ejemplo de configuración para `nxlog`:
+```plaintext title="nxlog.conf"
+<Input in>
+    Module im_msvistalog
+</Input>
+<Output out>
+    Module om_udp
+    Host localhost
+    Port 1729
+</Output>
+<Route 1>
+    Path in => out
+</Route>
+```
+Después de configurar `nxlog`, reinicia el servicio para aplicar los cambios:
+```cmd title="Command Prompt"
+net stop nxlog
+net start nxlog
+```
+### Syslog (MacOS)
+En MacOS es el mismo archivo de configuración de syslog que en Linux, pero el servicio se maneja con `launchctl`. Agrega la siguiente línea a tu archivo de configuración de syslog (por ejemplo, `/etc/syslog.conf`):
+```plaintext title="syslog.conf"
+*.* @localhost:1729
+```
+Luego, reinicia el servicio de syslog para aplicar los cambios:
+```bash title="Terminal"
+sudo launchctl stop com.apple.syslogd
+sudo launchctl start com.apple.syslogd
+```
+
+### Nginx
+Para enviar logs de Nginx a goxe, puedes utilizar el módulo `syslog`. Agrega la siguiente línea a tu archivo de configuración de Nginx (por ejemplo, `/etc/nginx/nginx.conf`):
+```plaintext
+error_log syslog:server=localhost:1729;
+access_log syslog:server=localhost:1729 combined;
+```
+Luego, reinicia Nginx para aplicar los cambios:
+```bash
+sudo systemctl restart nginx
+```
+### Aplicaciones Personalizadas
+Si estás desarrollando una aplicación personalizada, puedes enviar logs a goxe utilizando UDP. 
+<Tabs>
+    <TabItem label="Ejemplo en Python" icon="seti:python">
+        Aquí hay un ejemplo en Python:
+        ```python title="main.py"
+        import socket
+
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        log_message = "Este es un log de prueba"
+        sock.sendto(log_message.encode(), ("localhost", 1729))
+        ```
+    </TabItem>
+    <TabItem label="Ejemplo en Node.js" icon='node'>
+         Aquí hay un ejemplo en Node.js:
+        ```javascript title="main.js"
+        const dgram = require('dgram');
+        const message = Buffer.from('Este es un log de prueba');
+        const client = dgram.createSocket('udp4');
+        client.send(message, 1729, 'localhost', (err) => {
+            client.close();
+        });
+        ```
+    </TabItem>
+    <TabItem label="Ejemplo en Go" icon='seti:go'>
+            Aquí hay un ejemplo en Go:
+        ```go title="main.go"
+        package main
+
+        import (
+            "net"
+            "log"
+        )
+
+        func main() {
+            conn, err := net.Dial("udp", "localhost:1729")
+            if err != nil {
+                log.Fatal(err)
+            }
+            defer conn.Close()
+            logMessage := "Este es un log de prueba"
+            _, err = conn.Write([]byte(logMessage))
+            if err != nil {
+                log.Fatal(err)
+            }
+        }
+        ```
+    </TabItem>
+    Al final independiente mente de la aplicación o servicio que hayas utilizado goxe procesará los logs que reciba y se comportará según la configuración que hayas definido en tu `config.json`.
+    Goxe no te avisa al momento de recibir un log, pero puedes verificar que los logs están siendo recibidos, ya que es una aplicacion silenciosa, al momento de estar activo y haber configurado bien el envio de logs a goxe, goxe estara funcionando correctamente y procesando los logs que reciba. 
+    <Aside>
+        Todavia Goxe no tiene manera de avisar si esta recibiendo los logs, ya que la idea es evitar el ruido en la terminal, pronto habra una manera de verificar que goxe esta recibiendo los logs correctamente desde el mismo binario, pero por ahora, la mejor manera de verificar que goxe esta recibiendo los logs es revisar el archivo de logs generado por goxe, si has activado la opción de generar archivos de logs en tu configuración, puedes revisar el archivo de logs para verificar que goxe esta recibiendo los logs correctamente.
+    </Aside>
+</Tabs>
