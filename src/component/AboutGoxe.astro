@@ -1,12 +1,13 @@
 ---
 import Image from "astro/components/Image.astro";
+import goxeWhite from "/src/assets/goxe-white.webp";
 const { title } = Astro.props;
 ---
 
 <footer class="max-w-xl mx-auto mt-60">
     <p class="text-center">{title}</p>
     <Image
-        src="/src/assets/goxe-white.webp"
+        src={goxeWhite}
         alt="Goxe Logo"
         width="150"
         height="150"
