@@ -33,7 +33,9 @@ El archivo de configuración de goxe es un archivo JSON que define cómo se comp
     "address": "127.0.0.1:5045",
     "flushInterval": 30,
     "protocol": "tcp"
-  }
+  },
+  "ReportInterval": 60,
+  "BufferUdpSize": 4
 }
 ```
 ### Explicación de los campos
@@ -44,6 +46,8 @@ El archivo de configuración de goxe es un archivo JSON que define cómo se comp
 - `webhookUrls`: Una lista de webhooks a las que Goxe enviará las alertas al momento de activarse una rafaga de datos (Soporte con Slack y Discord por el momento).
 - `bursDetectionOptions`: Opciones para la detección de picos en los logs, como el límite de entradas repetidas antes de considerarlo un pico.
 - `shipper`: Configuración para enviar los logs procesados a un destino específico, incluyendo la dirección, el intervalo de envío y el protocolo a utilizar.
+- `ReportInterval`: El intervalo en minutos para generar resúmenes de los logs procesados.
+- `BufferUdpSize`: Tamaño del buffer UDP para recibir logs de UDP.
 
 ### Personalización
 Puedes personalizar cada uno de estos campos según tus necesidades específicas.

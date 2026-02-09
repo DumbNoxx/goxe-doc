@@ -34,7 +34,9 @@ The Goxe configuration file is a JSON file that defines how Goxe behaves. Below 
     "address": "127.0.0.1:5045",
     "flushInterval": 30,
     "protocol": "tcp"
-  }
+  },
+  "ReportInterval": 60,
+  "BufferUdpSize": 4
 }
 ```
 
@@ -46,6 +48,8 @@ The Goxe configuration file is a JSON file that defines how Goxe behaves. Below 
 - `webhookUrls`: A list of webhooks to which Goxe sends alerts when a data burst is detected (currently supports Slack and Discord).
 - `bursDetectionOptions`: Options for detecting log spikes, such as the repeated entry threshold before considering it a burst.
 - `shipper`: Configuration for shipping processed logs to a specific destination, including address, flush interval, and protocol.
+- `ReportInterval`: The interval in minutes for generating summaries of processed logs.
+- `BufferUdpSize`: The size of the UDP buffer for receiving logs via UDP.
 
 ### Customization
 You can customize each of these fields based on your specific needs.  
