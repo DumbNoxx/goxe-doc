@@ -21,13 +21,13 @@ First you need to install Goxe; you can install it from different sources.
     <Steps>
       1. Run the following command to download and build the project:
           ```bash title="Terminal" 
-          go install github.com/DumbNoxx/Goxe/cmd/goxe@latest 
+          go install github.com/DumbNoxx/goxe/cmd/goxe@latest 
           ```
           <p>Goxe is a standalone binary with no external dependencies just download and run.</p>
       2. Verify the installation
           ```bash title="Terminal"
           goxe -v
-          # v1.2.0
+          # v1.2.1
           ```
           The latest version should be displayed.
       3. Run Goxe
@@ -50,12 +50,12 @@ First you need to install Goxe; you can install it from different sources.
       2. The next step would be to double-click or use:
 
           ```bash title="Ubuntu Shell"
-          sudo apt install /path/to/Goxe_1.2.0_linux_amd64.deb # Or arm64
+          sudo apt install /path/to/goxe_1.2.1_linux_amd64.deb # Or arm64
           ```
       3. Verify the installation
           ```bash title="Ubuntu Shell"
           goxe -v
-          # v1.2.0 
+          # v1.2.1 
           ```
           The latest version should be displayed.
       4. Run goxe
@@ -74,12 +74,12 @@ First you need to install Goxe; you can install it from different sources.
       2. The next step would be to double-click or use:
 
           ```bash title="Fedora Shell"
-          sudo dnf install /path/to/Goxe_1.2.0_linux_amd64.rpm # Or arm64
+          sudo dnf install /path/to/goxe_1.2.1_linux_amd64.rpm # Or arm64
           ```
       3. Verify the installation
           ```bash title="Fedora Shell"
           goxe -v
-          # v1.2.0 
+          # v1.2.1 
           ```
           The latest version should be displayed.
       4. Run goxe
@@ -126,7 +126,7 @@ First you need to install Goxe; you can install it from different sources.
       3. Verify the installation:
           ```bash title="Arch Shell"
           goxe -v
-          # v1.2.0 
+          # v1.2.1 
           ```
           The latest version should be displayed.
       4. Run goxe
@@ -155,7 +155,7 @@ First you need to install Goxe; you can install it from different sources.
     2. Extract the archive
 
         ```bash title="Terminal"
-        tar -xzvf Goxe_1.2.0_linux_amd64.tar.gz -C /destination/goxe # Or arm64
+        tar -xzvf goxe_1.2.1_linux_amd64.tar.gz -C /destination/goxe # Or arm64
         ```
         <p>
           Use the same directory you created in the previous step.
@@ -163,8 +163,8 @@ First you need to install Goxe; you can install it from different sources.
     3. Make the binary executable and create a symbolic link
 
         ```bash title="Terminal"
-        chmod +x /destination/goxe/Goxe
-        sudo ln -s ~/destination/goxe/Goxe /usr/local/bin/goxe
+        chmod +x /destination/goxe/goxe
+        sudo ln -s ~/destination/goxe/goxe /usr/local/bin/goxe
         ```
         <Aside type='caution'>
           Creating the symbolic link requires <code>sudo</code> permissions.
@@ -209,7 +209,7 @@ First you need to install Goxe; you can install it from different sources.
         1. Open Command Prompt and verify the installation:
             ```cmd title="Command Prompt"
             goxe -v
-            # v1.2.0
+            # v1.2.1
             ```
             The latest version should be displayed.
 
@@ -276,14 +276,14 @@ First you need to install Goxe; you can install it from different sources.
     2. Extract the archive
 
         ```bash title="Terminal"
-        tar -xzvf Goxe_1.2.0_macos_amd64.tar.gz -C ~/goxe
+        tar -xzvf goxe_1.2.1_macos_amd64.tar.gz -C ~/goxe
         ```
 
     3. Make the binary executable and expose it globally
 
         ```bash title="Terminal"
-        chmod +x ~/goxe/Goxe
-        sudo ln -s ~/goxe/Goxe /usr/local/bin/goxe
+        chmod +x ~/goxe/goxe
+        sudo ln -s ~/goxe/goxe /usr/local/bin/goxe
         ```
 
         <Aside type="caution">
@@ -293,7 +293,7 @@ First you need to install Goxe; you can install it from different sources.
     4. If macOS blocks the binary, remove the quarantine flag
 
         ```bash title="Terminal"
-        xattr -d com.apple.quarantine ~/goxe/Goxe
+        xattr -d com.apple.quarantine ~/goxe/goxe
         ```
 
         <Aside>
