@@ -1,0 +1,46 @@
+---
+title: v1.3.6
+sidebar:
+    order: 1
+    badge:
+        text: Nueva versión
+        variant: success
+description: Goxe v1.3.6 introduce optimizaciones de rendimiento, correcciones críticas y una nueva experiencia de actualización fluida.
+---
+import { Steps } from '@astrojs/starlight/components';
+
+## Mejoras en Goxe
+Esta versión se enfoca en la eficiencia operativa. Hemos implementado mejoras de rendimiento que permiten a Goxe procesar registros con mayor velocidad, optimizando su comportamiento en escenarios de alta carga. Además, hemos resuelto errores reportados por la comunidad e integrado funciones diseñadas para mejorar la experiencia del usuario.
+
+## Cambios Destacados
+
+- **Optimización de Memoria y Velocidad**: Se ha migrado el procesamiento de registros de strings a byte slices. Este cambio reduce ligeramente el consumo de memoria y acelera significativamente el procesamiento de datos.
+- **Correcciones de Errores**: Se solucionó un fallo en la integración con la API de GitHub. Ahora, la detección de la última versión funciona correctamente y las notificaciones de actualización se emiten de forma precisa cada hora.
+- **Actualizaciones en Caliente (Unix)**: Se introduce el comando `goxe update`. Ahora puedes actualizar a la última versión desde una terminal externa sin detener el proceso principal de Goxe. 
+    > **Nota técnica:** Goxe seguirá recibiendo y procesando datos durante la transición; los datos recibidos se vuelcan al momento de ejecutar el cambio y la nueva versión toma el control de inmediato. Esta función es exclusiva para sistemas Unix/Linux. En Windows, la actualización debe realizarse manualmente desde la página de releases.
+
+---
+
+### Guía de Actualización
+
+Sigue estos pasos para instalar Goxe v1.3.6:
+
+<Steps>
+1.  **Si utilizas una versión anterior a la v1.3.5:**
+    * Detén el proceso de Goxe si está en ejecución.
+    * Descarga el binario directamente desde los lanzamientos de GitHub.
+
+2.  **Si ya estás en v1.3.5 o deseas actualizar vía Go:**
+    Ejecuta el siguiente comando en tu terminal:
+    ```bash title="Comando de actualización"
+    go install github.com/DumbNoxx/goxe/cmd/goxe@latest
+    ```
+</Steps>
+
+Al finalizar la instalación, ya contarás con las nuevas funcionalidades y optimizaciones. Puedes verificar la versión instalada con el comando:
+
+```bash title="Verificar versión instalada"
+goxe -v
+```
+
+[Ver historial de cambios completo](https://github.com/DumbNoxx/goxe/compare/v1.2.2...v1.3.6)

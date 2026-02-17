@@ -31,6 +31,12 @@ export default defineConfig({
 					autogenerate: { directory: "getting-started" }
 				},
 				{
+					label: 'Releases',
+					translations: {
+						es: "Lanzamientos"
+					},
+					autogenerate: { directory: 'releases' },
+				}, {
 					label: 'Reference',
 					translations: {
 						es: "Referencia"

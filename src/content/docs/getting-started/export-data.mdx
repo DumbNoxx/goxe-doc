@@ -1,0 +1,59 @@
+---
+sidebar: 
+    order: 4
+title: Exporting Goxe Data
+description: Technical guide for Remote Log Shipping
+---
+
+### Remote Shipping
+
+The **Remote Shipping** module is responsible for transmitting processed log aggregates from Goxe to external collectors. This functionality allows you to centralize telemetry in third-party infrastructures efficiently.
+
+#### Operational Workflow
+
+When the shipping function is triggered, Goxe performs the following procedure:
+
+1. **Validation**: Checks if an address is configured in `shipper.address`.
+2. **Connection**: Establishes a network connection using the defined protocol (TCP/UDP) and timeout.
+3. **Processing by Origin**: Iterates through each data source (`origin`).
+4. **Serialization**: Transforms counters and messages into individual JSON structures.
+5. **Transmission**: Writes the data directly to the connection stream.
+
+#### Shipper Configuration
+
+To enable this feature, edit the `shipper` section in your configuration file:
+
+```
+shipper:
+  protocol: "tcp"           # Network protocol (e.g., tcp, udp)
+  address: "127.0.0.1:8080" # Remote server address
+  flushInterval: 5          # Connection timeout (seconds)
+```
+
+#### Payload Structure (JSON)
+
+Goxe sends one JSON object for each detected origin. The structure follows the defined data model to ensure compatibility with the receiver:
+
+```json title="payload.json"
+{
+  "origin": "server-name",
+  "data": [
+    {
+      "count": 10,
+      "firstSeen": "2024-03-20T10:00:00Z",
+      "lastSeen": "2024-03-20T10:05:00Z",
+      "message": "Processed log message"
+    }
+  ]
+}
+```
+
+#### Field Specification
+
+* **origin**: Unique identifier of the log source (e.g., filename or service).
+* **data**: Collection of events detected for that specific origin.
+* **count**: Number of times the message was repeated in the current interval.
+* **firstSeen / lastSeen**: Timestamps indicating the event's activity window.
+* **message**: The full content of the log or the identified pattern.
+
+> **Important:** The connection is automatically closed once all origins have been processed and sent. If the remote server does not respond or the write operation fails, Goxe will return a connection error that can be reviewed in the system's internal logs.

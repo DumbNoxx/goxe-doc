@@ -1,0 +1,46 @@
+---
+title: v1.3.6
+sidebar:
+    order: 1
+    badge:
+        text: New version
+        variant: success
+description: Goxe v1.3.6 introduces performance optimizations, critical bug fixes, and a new seamless update experience.
+---
+import { Steps } from '@astrojs/starlight/components';
+
+## Improvements in Goxe
+This version focuses on operational efficiency. We have implemented performance enhancements that allow Goxe to process logs faster, optimizing its behavior in high-load scenarios. Additionally, several community-reported bugs have been resolved, and new features have been integrated to improve the overall user experience.
+
+## Highlighted Changes
+
+- **Memory and Speed Optimization**: Log processing has been migrated from strings to byte slices. This change slightly reduces memory consumption and significantly accelerates data processing speed.
+- **Bug Fixes**: Resolved an issue with the GitHub API integration. Update detection now works correctly, and update notifications are accurately triggered every hour.
+- **Hot Updates (Unix)**: Introducing the `goxe update` command. You can now update to the latest version from an external terminal without stopping the main Goxe process.
+    > **Technical Note:** Goxe will continue to receive and process data during the transition; received data is flushed when the switch occurs, and the new version takes control immediately. This feature is exclusive to Unix/Linux systems. For Windows, updates must be performed manually from the releases page.
+
+---
+
+### Update Guide
+
+Follow these steps to install Goxe v1.3.6:
+
+<Steps>
+1.  **If you are using a version prior to v1.3.5:**
+    * Stop the Goxe process if it is running.
+    * Download the binary directly from the GitHub releases page.
+
+2.  **If you are on v1.3.5 or want to update via Go:**
+    Run the following command in your terminal:
+    ```bash title="Update command"
+    go install github.com/DumbNoxx/goxe/cmd/goxe@latest
+    ```
+</Steps>
+
+Once the installation is complete, you will have all the new features and performance improvements. You can verify the installed version with the following command:
+
+```bash title="Check installed version"
+goxe -v
+```
+
+[View full changelog](https://github.com/DumbNoxx/goxe/compare/v1.2.2...v1.3.6)

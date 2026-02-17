@@ -1,0 +1,61 @@
+---
+sidebar: 
+    order: 4
+title: Exportar datos de Goxe
+description: Guía técnica para el reenvío de logs (Remote Shipping)
+---
+
+### Envío Remoto
+
+El módulo de **Remote Shipping** es el encargado de transmitir los agregados de logs procesados por Goxe hacia colectores externos. Esta funcionalidad permite centralizar la telemetría en infraestructuras de terceros de manera eficiente.
+
+
+
+#### Flujo de Operación
+
+Cuando se invoca la función de envío, Goxe realiza el siguiente procedimiento:
+
+1. **Validación**: Verifica si existe una dirección configurada en `shipper.address`.
+2. **Conexión**: Establece una conexión de red utilizando el protocolo (TCP/UDP) y el tiempo de espera (timeout) definidos.
+3. **Procesamiento por Origen**: Itera sobre cada fuente de datos (`origin`).
+4. **Serialización**: Transforma los contadores y mensajes en estructuras JSON individuales.
+5. **Transmisión**: Escribe los datos directamente en el stream de la conexión.
+
+#### Configuración del Shipper
+
+Para habilitar esta característica, edite la sección `shipper` en su archivo de configuración:
+
+```
+shipper:
+  protocol: "tcp"           # Protocolo de red (ej. tcp, udp)
+  address: "127.0.0.1:8080" # Dirección del servidor remoto
+  flushInterval: 5          # Tiempo de espera para la conexión (segundos)
+```
+
+#### Estructura del Payload (JSON)
+
+Goxe envía un objeto JSON por cada origen detectado. La estructura sigue el modelo de datos definido para asegurar la compatibilidad con el receptor:
+
+```json title="payload.json"
+{
+  "origin": "nombre-del-servidor",
+  "data": [
+    {
+      "count": 10,
+      "firstSeen": "2024-03-20T10:00:00Z",
+      "lastSeen": "2024-03-20T10:05:00Z",
+      "message": "Mensaje de log procesado"
+    }
+  ]
+}
+```
+
+#### Especificación de Campos
+
+* **origin**: Identificador único de la fuente de los logs (ej. nombre del archivo o servicio).
+* **data**: Colección de eventos detectados para ese origen específico.
+* **count**: Cantidad de veces que se repitió el mensaje en el intervalo actual.
+* **firstSeen / lastSeen**: Marcas de tiempo que indican la ventana de actividad del evento.
+* **message**: El contenido íntegro del log o patrón identificado.
+
+> **Importante:** La conexión se cierra automáticamente una vez que todos los orígenes han sido procesados y enviados. Si el servidor remoto no responde o la escritura falla, Goxe retornará un error de conexión que puede ser consultado en los logs internos del sistema.
