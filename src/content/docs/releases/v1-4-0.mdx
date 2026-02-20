@@ -1,0 +1,42 @@
+---
+title: v1.4.0
+sidebar:
+    order: -140
+    badge:
+        text: Latest
+        variant: success
+description: Goxe v1.4.0 resolves critical persistence issues, introduces file normalization, and a more robust code structure.
+---
+import { Steps } from '@astrojs/starlight/components';
+
+## Improvements in Goxe v1.4.0
+This update focuses on stability and technical refinement. We have fixed bugs in data persistence during process termination and restructured the application core to facilitate future expansions, significantly improving internal documentation and file handling.
+
+## Featured Changes
+
+- **Persistence Fix**: A bug causing data loss upon process termination has been resolved. The shutdown logic now ensures that all data in transit is processed and remote delivery is securely completed before exiting.
+- **File Normalization**: A new file normalization flow is introduced, toggleable via a command-line flag. This feature standardizes file creation and cleanup, ensuring a predictable working environment.
+- **Core Refactoring**: We have modularized the main logic and flag handling in `main.go`. This results in cleaner code, a slightly faster startup, and a more maintainable architecture.
+- **Documentation and Guides**: Contribution guides (`CONTRIBUTING.md`) have been implemented and core function documentation has been standardized, facilitating repository collaboration.
+- **Experience Improvements (UX)**: The update notification text is now more descriptive, explicitly including the `goxe update` command to simplify the process for the user.
+
+---
+
+### Static Log Analysis (`-brew`)
+
+The new `-brew` flag allows for processing historical log files generated externally or prior to the Goxe installation. it is an independent feature designed for those who need to normalize old reports, reduce the disk space these files occupy through clustering, and send those metrics to their remote server in one go.
+
+**What exactly happens when executed?**
+* **Reading and Clustering**: The engine uses a `bufio.Scanner` for efficient file reading. Each line is processed through `cluster.Cluster` to group similar messages and sanitize content, utilizing `unsafe` conversions to maximize speed without overloading memory.
+* **Statistics Generation**: For each pattern found, Goxe calculates the frequency of occurrence (`Count`), identifies the log level (`Level`), and records the timestamps of the first and last time said pattern was detected.
+* **Output and Results**: 
+    1. **Local Report**: Upon reaching the end of the file (EOF), the `FileReader` component automatically generates a report on disk with the processed results, facilitating subsequent reading.
+    2. **Remote Delivery**: In parallel, the `ShipLogs` function synchronizes the entire map of collected statistics with your remote server.
+* **Memory Cleanup**: Once the export is finished, the log map is released via the `clear()` function to ensure no residues remain in the system.
+
+**Execution command:**
+`goxe -brew /path/to/file.log logID`
+
+Upon completing the analysis, the system will confirm the save path: `[System] Goxe: Normalization complete. Saved as ...`, and the report will be available both locally and on your remote server.
+
+[View full changelog](https://github.com/DumbNoxx/goxe/compare/v1.3.6...v1.4.0)

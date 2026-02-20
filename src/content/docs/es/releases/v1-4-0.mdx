@@ -1,0 +1,44 @@
+---
+title: v1.4.0
+sidebar:
+    order: -140
+    badge:
+        text: Ultima versión
+        variant: success
+description: Goxe v1.4.0 resuelve problemas críticos de persistencia, introduce normalización de archivos y una estructura de código más robusta.
+---
+import { Steps } from '@astrojs/starlight/components';
+
+## Mejoras en Goxe v1.4.0
+Esta actualización se centra en la estabilidad y el refinamiento técnico. Hemos corregido fallos en la persistencia de datos durante el cierre del proceso y reestructurado el núcleo de la aplicación para facilitar futuras expansiones, mejorando significativamente la documentación interna y el manejo de archivos.
+
+## Cambios Destacados
+
+- **Corrección en Persistencia**: Se ha solucionado un error que provocaba la pérdida de datos al terminar el proceso. Ahora, la lógica de cierre (shutdown) garantiza que toda la información en tránsito se procese y se realice el envío remoto de forma segura antes de finalizar.
+- **Normalización de Archivos**: Se introduce un nuevo flujo de normalización de archivos activable mediante un flag de línea de comandos. Esta función estandariza la creación y limpieza de archivos, asegurando un entorno de trabajo predecible.
+- **Refactorización del Núcleo**: Hemos modularizado la lógica principal y el manejo de flags en `main.go`. Esto resulta en un código más limpio, un arranque ligeramente más rápido y una arquitectura más fácil de mantener.
+- **Documentación y Guías**: Se han implementado guías de contribución (`CONTRIBUTING.md`) y estandarizado la documentación de las funciones core, facilitando la colaboración en el repositorio.
+- **Mejoras en la Experiencia (UX)**: El texto de notificación de actualización ahora es más descriptivo, incluyendo explícitamente el comando `goxe update` para simplificar el proceso al usuario.
+
+---
+
+### Análisis de Logs Estáticos (`-brew`)
+
+El nuevo flag `-brew` permite procesar archivos de logs históricos generados de forma externa o previa a la instalación de Goxe. Es una funcionalidad independiente diseñada para quienes necesitan normalizar reportes antiguos, reducir el espacio que ocupan estos archivos en disco mediante clustering y enviar esas métricas a su servidor remoto de una sola vez.
+
+**¿Qué sucede exactamente al ejecutarlo?**
+* **Lectura y Clustering**: El motor utiliza un `bufio.Scanner` para leer el archivo de forma eficiente. Cada línea se procesa a través de `cluster.Cluster` para agrupar mensajes similares y sanitizar el contenido, utilizando conversiones `unsafe` para maximizar la velocidad sin sobrecargar la memoria.
+* **Generación de Estadísticas**: Por cada patrón encontrado, Goxe calcula la frecuencia de aparición (`Count`), identifica el nivel de log (`Level`) y registra las marcas temporales de la primera y última vez que se detectó dicho patrón.
+* **Output y Resultados**: 
+    1. **Reporte Local**: Al alcanzar el final del archivo (EOF), el componente `FileReader` genera automáticamente un reporte en el disco con los resultados procesados, facilitando su lectura posterior.
+    2. **Envío Remoto**: Paralelamente, la función `ShipLogs` sincroniza todo el mapa de estadísticas recolectadas con tu servidor remoto.
+* **Limpieza de Memoria**: Una vez finalizada la exportación, el mapa de logs se libera mediante la función `clear()` para asegurar que no queden residuos en el sistema.
+
+**Comando de ejecución:**
+```bash title="Ejemplo de uso del flag -brew"
+goxe -brew /ruta/al/archivo.log idLog
+```
+
+Al terminar el análisis, el sistema confirmará la ruta del guardado: `[System] Goxe: Normalization complete. Saved as ...`, y el reporte estará disponible tanto localmente como en tu servidor remoto.
+
+[Ver historial de cambios completo](https://github.com/DumbNoxx/goxe/compare/v1.3.6...v1.4.0)
