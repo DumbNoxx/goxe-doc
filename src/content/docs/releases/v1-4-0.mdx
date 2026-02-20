@@ -35,7 +35,9 @@ The new `-brew` flag allows for processing historical log files generated extern
 * **Memory Cleanup**: Once the export is finished, the log map is released via the `clear()` function to ensure no residues remain in the system.
 
 **Execution command:**
-`goxe -brew /path/to/file.log logID`
+```bash title="Example usage of the -brew flag"
+goxe -brew /path/to/file.log logID
+```
 
 Upon completing the analysis, the system will confirm the save path: `[System] Goxe: Normalization complete. Saved as ...`, and the report will be available both locally and on your remote server.
 
