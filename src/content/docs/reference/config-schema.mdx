@@ -1,0 +1,67 @@
+---
+title: Config File Schema
+description: Technical reference for the Goxe config.json file.
+---
+import { Aside } from '@astrojs/starlight/components';
+
+The `config.json` file controls all aspects of Goxe's behavior, from networking to aggregation logic. It is located in your system's standard configuration directory (e.g., `~/.config/goxe/config.json` on Linux).
+
+## Root Properties
+
+| Property | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `port` | `number` | `1729` | The UDP port Goxe listens on to receive incoming log streams. |
+| `idLog` | `string` | `"hostname"` | Field used to identify the source of the logs (e.g., hostname, app name). |
+| `pattenersWords` | `string[]` | `[]` | A list of strings/words that Goxe should ignore when processing logs. |
+| `webhookUrls` | `string[]` | `[]` | List of Slack/Discord webhook URLs for burst notifications. |
+| `ReportInterval` | `number` | `60` | Time interval in minutes between summary reports. |
+| `BufferUdpSize` | `number` | `4` | Size of the UDP buffer in MB for receiving logs. |
+| `destination` | `string` | `"socket"` | Output format/destination of the logs (currently only `"socket"` is supported). |
+| `integrations` | `object[]` | `[]` | List of HTTP endpoints to send normalized logs to. |
+
+---
+
+## `integrations`
+Configuration for sending logs to external HTTP observability platforms.
+
+| Property | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `url` | `string` | `-` | The destination HTTP endpoint (e.g., a Cloudflare Worker URL). |
+| `headers` | `object` | `{}` | Key-value pairs of HTTP headers (useful for auth tokens). |
+| `onAggregation` | `boolean` | `true` | Toggles this specific integration on or off. |
+
+---
+
+## `generateLogsOptions`
+Options for local log file archival.
+
+| Property | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `generateLogsFile` | `boolean` | `false` | If `true`, Goxe will save aggregated logs to the local cache directory. |
+| `hour` | `string` | `"00:00:00"` | The specific time (HH:MM:SS) to trigger the daily log rotation/generation. |
+
+---
+
+## `bursDetectionOptions`
+Thresholds for identifying log spikes.
+
+| Property | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `limitBreak` | `number` | `10` | Number of identical logs per second required to trigger a "burst" alert. |
+
+---
+
+## `shipper`
+Configuration for forwarding processed data to external collectors.
+
+| Property | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `address` | `string` | `"127.0.0.1:5045"` | Destination address (IP:Port) for the processed logs. |
+| `protocol` | `string` | `"tcp"` | Network protocol used for shipping (`tcp` or `udp`). |
+| `flushInterval` | `number` | `30` | How often (in seconds) to flush the buffer to the destination. |
+
+---
+
+<Aside type="caution">
+  Goxe supports **Hot Reload**. Changes to `config.json` are detected and applied instantly without needing to restart the service.
+</Aside>

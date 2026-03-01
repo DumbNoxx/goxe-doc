@@ -1,0 +1,212 @@
+---
+title: v1.5.0
+sidebar:
+    order: -150
+    badge:
+        text: Última versión
+        variant: success
+description: Goxe v1.5.0 introduce el envío de logs normalizados hacia plataformas de observabilidad vía HTTP y optimizaciones en la persistencia de datos.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+## Mejoras en Goxe v1.5.0
+
+Esta actualización se focaliza en la integración nativa con ecosistemas de observabilidad y el robustecimiento de la persistencia. Goxe ahora permite el transporte de logs normalizados directamente a través de protocolos HTTP, optimizando la telemetría y el análisis de eventos en tiempo real. Asimismo, se han refinado los mecanismos de escritura para asegurar la integridad de los datos bajo cargas de trabajo con alta concurrencia de eventos.
+
+## Cambios Destacados
+
+- **Integración con Plataformas de Observabilidad**: Capacidad de exportación de logs normalizados mediante peticiones HTTP para una ingesta de datos eficiente.
+- **Optimización de Persistencia**: Refactorización de la capa de almacenamiento para gestionar múltiples eventos simultáneos sin degradación de rendimiento.
+- **Resolución de Bugs**: Correcciones en la gestión de descriptores de archivos y mejoras generales en la estabilidad del binario.
+- **Actualización Técnica**: Revisión exhaustiva de la documentación para cubrir las nuevas capacidades de configuración.
+
+---
+
+### Exportación de Logs Normalizados vía HTTP
+
+Esta funcionalidad permite desacoplar el procesamiento de logs de la visualización, enviando la carga útil normalizada hacia cualquier endpoint compatible con HTTP. Esta arquitectura facilita la correlación de datos y agiliza la respuesta ante incidentes.
+
+#### Ejemplo de implementación
+
+Para ilustrar la integración, consideremos un endpoint desplegado en Cloudflare Workers. 
+
+Goxe mantiene la retrocompatibilidad: si se omiten los nuevos campos en el archivo config.json, el servicio ignorará estas funcionalidades y operará con sus valores predeterminados sin interrumpir la ejecución.
+
+Para habilitar el envío de datos, se deben incorporar las siguientes secciones en la configuración:
+
+```json title="config.json"
+"integrations": [],
+"destination": "socket"
+```
+
+**Integrations**: Define un array de objetos con los parámetros de conexión:
+
+```json title="integration"
+"integrations": [
+    {
+        "url": "https://your-endpoint.domain.com",
+        "headers": {
+            "x-key": "x-key"
+        },
+        "onAggregation": true
+    }
+]
+```
+
+Atributos técnicos:
+- **Url**: Endpoint de destino para la ingesta de los logs.
+- **Headers**: Objeto destinado a la definición de cabeceras HTTP (utilizado comúnmente para tokens de autorización).
+- **onAggregation**: Booleano que conmuta el estado de la integración, permitiendo deshabilitar el flujo de datos sin eliminar la configuración preestablecida.
+
+**Destination**: Define el formato de salida de los logs. El valor predeterminado es "socket", indicando que los datos se transportan como estructuras JSON serializadas.
+
+` title="destination"
+"destination": "socket"
+`
+
+*Nota: Actualmente, la arquitectura se especializa en JSON bajo el identificador "socket". Se prevé el soporte futuro para destinos con esquemas propietarios, como AWS CloudWatch.*
+
+#### Caso de uso:
+
+ <Tabs>
+    <TabItem value="configuracion" label="Cloudflare" icon="cloudflare">
+        <Tabs>
+            <TabItem value="web" label="Interfaz Web">
+              <Steps>
+                1. **Despliegue del Worker**:
+                   Genere un nuevo Worker desde el Dashboard de Cloudflare para obtener la URL de ingreso (ej. https://goxe-handler.tu-subdominio.workers.dev).
+
+                2. **Gestión de Autenticación**:
+                   Goxe utiliza cabeceras HTTP para la validación. Se recomienda configurar variables de entorno en el Worker para contrastar los tokens enviados desde el cliente.
+
+                   ```json title="config.json"
+                   "integrations": [
+                       {
+                           "url": "https://your-endpoint.domain.com",                           "headers": {
+                               "testing": "testing-value"
+                           },
+                           "onAggregation": true
+                       }
+                   ]
+                   ```
+
+                3. **Estructura del Payload**:
+                   Goxe transmite los datos bajo el siguiente esquema:
+
+                   ```json title="payload.json"
+                   [
+                       {
+                           "origin": "127.0.0.1",
+                           "data": [
+                               {
+                               "count": 10,
+                               "firstSeen": "2024-03-20T10:00:00Z",
+                               "lastSeen": "2024-03-20T10:05:00Z",
+                               "message": "Error: Connection refused id=*",
+                               }
+                           ]
+                       }
+                   ]
+                   ```
+                    <Aside type='caution'>
+                      Se ha actualizado el formato del payload para incluir una capa de agrupación por origen. Este cambio previene la colisión de datos procedentes de distintas instancias y garantiza que la telemetría sea representativa de toda la infraestructura. Es necesario ajustar los parsers para iterar sobre este nuevo array de objetos.
+                    </Aside>
+
+                4. **Lógica del Worker**:
+                   Utilice el siguiente boilerplate para procesar la entrada de Goxe:
+
+                    ```js title="worker.js"
+                    export default {
+                        async fetch(request, env) {
+                            const authKey = request.headers.get('testing');
+                            if (authKey !== env.testing) {
+                                return new Response('Unauthorized', { status: 401 });
+                            }
+
+                            if (request.method === 'POST') {
+                                try {
+                                    const payload = await request.json();
+
+                                    payload.forEach(batch => {
+                                        const origin = batch.origin;
+                                        batch.data.forEach(log => {
+                                            const enrichedLog = {
+                                                ...log,
+                                                origin: origin,
+                                                service: "goxe-service"
+                                            };
+                                            console.log(enrichedLog);
+                                        });
+                                    });
+
+                                    return new Response(JSON.stringify({ success: true }), {
+                                        headers: { 'Content-Type': 'application/json' }
+                                    });
+                                } catch (e) {
+                                    return new Response(JSON.stringify({ error: 'Invalid Payload' }), {
+                                        status: 400,
+                                        headers: { 'Content-Type': 'application/json' }
+                                    });
+                                }
+                            }
+                            return new Response('Method Not Allowed', { status: 405 });
+                        }
+                    };
+                    ```
+                </Steps>
+
+                Para la inspección de tráfico, acceda a la sección de **Observability** en Cloudflare. Mediante el **Query Builder** (basado en Baselime), podrá realizar análisis granulares de latencia y consumo de recursos.
+
+                Configuración recomendada en Query Builder:
+                - **Visualization**: Añadir un cálculo de tipo Sum sobre la llave count.
+                - **Group By**: Agrupar por origin y message.
+
+                Esta configuración permite visualizar la frecuencia de eventos normalizados segmentados por su procedencia.
+            </TabItem>
+            <TabItem value="CLI" label="Wrangler CLI">
+                <Steps>
+                    1. **Instalación de dependencias**:
+                        
+                        ```bash title="Instalación de Wrangler CLI"
+                        npm install -g wrangler
+                        ```
+
+                    2. **Inicialización del proyecto**:
+
+                        ```bash title="Creación de un nuevo Worker"
+                        npm create cloudflare@latest goxe-worker
+                        ```
+                    
+                    3. **Configuración de entorno**:
+                        Edite el archivo wrangler.jsonc para incluir las variables necesarias:
+
+                        ```json title="wrangler.jsonc"
+                        {
+                            "vars": {
+                                "testing": "testing-value"
+                            },
+                            "observability": {
+                                "enabled": true
+                            }
+                        }
+                        ```
+                    
+                    4. **Implementación**: Inserte la lógica de procesamiento en el archivo principal del proyecto.
+                    
+                    5. **Despliegue**:
+
+                        ```bash title="Deploy"
+                        wrangler deploy
+                        ```
+                </Steps>
+            </TabItem>
+        </Tabs>
+    </TabItem>
+    #### Consideraciones Adicionales
+    Los ejemplos proporcionados constituyen implementaciones base diseñadas para validar la conectividad. Para despliegues en entornos de producción, se recomienda extender estas configuraciones conforme a los requisitos específicos de su infraestructura o plataforma de observabilidad.
+</Tabs>
+
+---
+
+[Consultar el historial completo de cambios](https://github.com/DumbNoxx/goxe/compare/v1.4.0...v1.5.0)

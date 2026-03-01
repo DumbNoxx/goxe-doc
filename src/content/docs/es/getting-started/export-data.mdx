@@ -37,17 +37,19 @@ shipper:
 Goxe envía un objeto JSON por cada origen detectado. La estructura sigue el modelo de datos definido para asegurar la compatibilidad con el receptor:
 
 ```json title="payload.json"
-{
-  "origin": "nombre-del-servidor",
-  "data": [
+[
     {
-      "count": 10,
-      "firstSeen": "2024-03-20T10:00:00Z",
-      "lastSeen": "2024-03-20T10:05:00Z",
-      "message": "Mensaje de log procesado"
-    }
-  ]
-}
+    "origin": "nombre-del-servidor",
+    "data": [
+      {
+        "count": 10,
+        "firstSeen": "2024-03-20T10:00:00Z",
+        "lastSeen": "2024-03-20T10:05:00Z",
+        "message": "Mensaje de log procesado"
+      }
+    ]
+  }
+]
 ```
 
 #### Especificación de Campos

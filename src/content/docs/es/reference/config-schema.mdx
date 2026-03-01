@@ -1,0 +1,67 @@
+---
+title: Config File Schema
+description: Referencia técnica para el archivo config.json de Goxe.
+---
+import { Aside } from '@astrojs/starlight/components';
+
+El archivo `config.json` controla todos los aspectos del comportamiento de Goxe, desde la red hasta la lógica de agregación. Se encuentra en el directorio estándar de configuración de tu sistema (por ejemplo, `~/.config/goxe/config.json` en Linux).
+
+## Propiedades Raíz
+
+| Propiedad | Tipo | Valor por Defecto | Descripción |
+| :--- | :--- | :--- | :--- |
+| `port` | `number` | `1729` | Puerto UDP en el que Goxe escucha para recibir flujos de logs entrantes. |
+| `idLog` | `string` | `"hostname"` | Campo utilizado para identificar el origen de los logs (ej. hostname, nombre de la aplicación). |
+| `pattenersWords` | `string[]` | `[]` | Lista de cadenas/palabras que Goxe debe ignorar al procesar los logs. |
+| `webhookUrls` | `string[]` | `[]` | Lista de URLs de webhooks de Slack/Discord para notificaciones de ráfagas. |
+| `ReportInterval` | `number` | `60` | Intervalo de tiempo en minutos entre reportes resumidos. |
+| `BufferUdpSize` | `number` | `4` | Tamaño del buffer UDP en MB para la recepción de logs. |
+| `destination` | `string` | `"socket"` | Formato/destino de salida de los logs (actualmente solo se soporta `"socket"`). |
+| `integrations` | `object[]` | `[]` | Lista de endpoints HTTP a los que se enviarán los logs normalizados. |
+
+---
+
+## `integrations`
+Configuración para enviar logs a plataformas externas de observabilidad vía HTTP.
+
+| Propiedad | Tipo | Valor por Defecto | Descripción |
+| :--- | :--- | :--- | :--- |
+| `url` | `string` | `-` | Endpoint HTTP de destino (ej. una URL de Cloudflare Worker). |
+| `headers` | `object` | `{}` | Pares clave-valor de cabeceras HTTP (útil para tokens de autenticación). |
+| `onAggregation` | `boolean` | `true` | Activa o desactiva esta integración específica. |
+
+---
+
+## `generateLogsOptions`
+Opciones para el archivado local de logs.
+
+| Propiedad | Tipo | Valor por Defecto | Descripción |
+| :--- | :--- | :--- | :--- |
+| `generateLogsFile` | `boolean` | `false` | Si es `true`, Goxe guardará los logs agregados en el directorio local de caché. |
+| `hour` | `string` | `"00:00:00"` | Hora específica (HH:MM:SS) para ejecutar la rotación/generación diaria de logs. |
+
+---
+
+## `bursDetectionOptions`
+Umbrales para la identificación de picos de logs.
+
+| Propiedad | Tipo | Valor por Defecto | Descripción |
+| :--- | :--- | :--- | :--- |
+| `limitBreak` | `number` | `10` | Número de logs idénticos por segundo necesarios para activar una alerta de "burst". |
+
+---
+
+## `shipper`
+Configuración para reenviar datos procesados a recolectores externos.
+
+| Propiedad | Tipo | Valor por Defecto | Descripción |
+| :--- | :--- | :--- | :--- |
+| `address` | `string` | `"127.0.0.1:5045"` | Dirección de destino (IP:Puerto) para los logs procesados. |
+| `protocol` | `string` | `"tcp"` | Protocolo de red utilizado para el envío (`tcp` o `udp`). |
+| `flushInterval` | `number` | `30` | Frecuencia (en segundos) con la que se vacía el buffer hacia el destino. |
+
+---
+
+<Aside type="caution">
+  Goxe soporta **Hot Reload**. Los cambios en `config.json` se detectan y aplican instantáneamente sin necesidad de reiniciar el servicio.
+</Aside>

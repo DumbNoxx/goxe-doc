@@ -1,0 +1,31 @@
+---
+title: CLI Flags
+description: Opciones de la interfaz de línea de comandos para Goxe.
+---
+import { Aside } from '@astrojs/starlight/components';
+
+Utiliza estas banderas para controlar el comportamiento del binario `goxe` desde tu terminal.
+
+## Banderas Disponibles
+
+| Flag | Alias | Descripción |
+| :--- | :--- | :--- |
+| `-b` | `-brew` | Destila y normaliza un archivo de log crudo en un reporte estructurado. |
+| `-v` | `-version`  | Muestra la versión actual del programa. |
+
+## Ejemplos de Uso
+
+### Verificar Versión
+Para comprobar qué versión de Goxe estás ejecutando actualmente:
+
+```bash title="Terminal"
+goxe -v
+```
+
+### Procesar Logs
+Para destilar y normalizar un archivo de log crudo en un reporte estructurado:
+
+```bash title="Terminal"
+goxe -brew path/to/your/logfile.log idLog
+```
+

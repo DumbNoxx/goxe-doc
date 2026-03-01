@@ -1,0 +1,213 @@
+---
+title: v1.5.0
+sidebar:
+    order: -150
+    badge:
+        text: Latest
+        variant: success
+description: Goxe v1.5.0 introduces the delivery of normalized logs to observability platforms via HTTP and optimizations in data persistence.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+## Improvements in Goxe v1.5.0
+
+This update focuses on native integration with observability ecosystems and strengthening persistence. Goxe now enables the transport of normalized logs directly through HTTP protocols, optimizing telemetry and real-time event analysis. Additionally, the write mechanisms have been refined to ensure data integrity under workloads with high event concurrency.
+
+## Key Changes
+
+- **Integration with Observability Platforms**: Ability to export normalized logs through HTTP requests for efficient data ingestion.
+- **Persistence Optimization**: Refactoring of the storage layer to handle multiple simultaneous events without performance degradation.
+- **Bug Fixes**: Fixes in file descriptor management and overall binary stability improvements.
+- **Technical Update**: Comprehensive documentation review to cover the new configuration capabilities.
+
+---
+
+### Exporting Normalized Logs via HTTP
+
+This feature allows decoupling log processing from visualization by sending the normalized payload to any HTTP-compatible endpoint. This architecture facilitates data correlation and accelerates incident response.
+
+#### Implementation Example
+
+To illustrate the integration, let’s consider an endpoint deployed on Cloudflare Workers.
+
+Goxe maintains backward compatibility: if the new fields are omitted in the config.json file, the service will ignore these features and operate with its default values without interrupting execution.
+
+To enable data delivery, the following sections must be added to the configuration:
+
+```json title="config.json"
+"integrations": [],
+"destination": "socket"
+```
+
+**Integrations**: Defines an array of objects with connection parameters:
+
+```json title="integration"
+"integrations": [
+    {
+        "url": "https://your-endpoint.domain.com",
+        "headers": {
+            "x-key": "your-access-credential"
+        },
+        "onAggregation": true
+    }
+]
+```
+
+Technical attributes:
+- **Url**: Destination endpoint for log ingestion.
+- **Headers**: Object used to define HTTP headers (commonly used for authorization tokens).
+- **onAggregation**: Boolean that toggles the integration state, allowing you to disable the data flow without removing the predefined configuration.
+
+**Destination**: Defines the output format of the logs. The default value is "socket", indicating that the data is transported as serialized JSON structures.
+
+```json title="destination"
+"destination": "socket"
+```
+
+*Note: Currently, the architecture specializes in JSON under the "socket" identifier. Future support is planned for proprietary schema destinations such as AWS CloudWatch.*
+
+#### Use Case:
+
+<Tabs>
+    <TabItem value="configuration" label="Cloudflare" icon="cloudflare">
+        <Tabs>
+            <TabItem value="web" label="Web Interface">
+              <Steps>
+                1. **Worker Deployment**:
+                   Create a new Worker from the Cloudflare Dashboard to obtain the ingestion URL (e.g., https://goxe-handler.your-subdomain.workers.dev).
+
+                2. **Authentication Management**:
+                   Goxe uses HTTP headers for validation. It is recommended to configure environment variables in the Worker to validate tokens sent from the client.
+
+                   ```json title="config.json"
+                   "integrations": [
+                       {
+                           "url": "https://your-endpoint.domain.com",
+                           "headers": {
+                               "testing": "testing-value"
+                           },
+                           "onAggregation": true
+                       }
+                   ]
+                   ```
+
+                3. **Payload Structure**:
+                   Goxe transmits data under the following schema:
+
+                   ```json title="payload.json"
+                   [
+                       {
+                           "origin": "127.0.0.1",
+                           "data": [
+                               {
+                               "count": 10,
+                               "firstSeen": "2024-03-20T10:00:00Z",
+                               "lastSeen": "2024-03-20T10:05:00Z",
+                               "message": "Error: Connection refused id=*",
+                               }
+                           ]
+                       }
+                   ]
+                   ```
+                    <Aside type='caution'>
+                      The payload format has been updated to include an origin-level grouping layer. This change prevents data collisions from different instances and ensures telemetry accurately represents the entire infrastructure. Parsers must be adjusted to iterate over this new array of objects.
+                    </Aside>
+
+                4. **Worker Logic**:
+                   Use the following boilerplate to process incoming data from Goxe:
+
+                    ```js title="worker.js"
+                    export default {
+                        async fetch(request, env) {
+                            const authKey = request.headers.get('testing');
+                            if (authKey !== env.testing) {
+                                return new Response('Unauthorized', { status: 401 });
+                            }
+
+                            if (request.method === 'POST') {
+                                try {
+                                    const payload = await request.json();
+
+                                    payload.forEach(batch => {
+                                        const origin = batch.origin;
+                                        batch.data.forEach(log => {
+                                            const enrichedLog = {
+                                                ...log,
+                                                origin: origin,
+                                                service: "goxe-service"
+                                            };
+                                            console.log(enrichedLog);
+                                        });
+                                    });
+
+                                    return new Response(JSON.stringify({ success: true }), {
+                                        headers: { 'Content-Type': 'application/json' }
+                                    });
+                                } catch (e) {
+                                    return new Response(JSON.stringify({ error: 'Invalid Payload' }), {
+                                        status: 400,
+                                        headers: { 'Content-Type': 'application/json' }
+                                    });
+                                }
+                            }
+                            return new Response('Method Not Allowed', { status: 405 });
+                        }
+                    };
+                    ```
+                </Steps>
+
+                For traffic inspection, access the **Observability** section in Cloudflare. Using the **Query Builder** (powered by Baselime), you can perform granular analysis of latency and resource consumption.
+
+                Recommended Query Builder configuration:
+                - **Visualization**: Add a Sum calculation on the count key.
+                - **Group By**: Group by origin and message.
+
+                This setup allows visualization of normalized event frequency segmented by origin.
+            </TabItem>
+            <TabItem value="CLI" label="Wrangler CLI">
+                <Steps>
+                    1. **Install dependencies**:
+                        
+                        ```bash title="Wrangler CLI Installation"
+                        npm install -g wrangler
+                        ```
+
+                    2. **Project initialization**:
+
+                        ```bash title="Create a New Worker"
+                        npm create cloudflare@latest goxe-worker
+                        ```
+                    
+                    3. **Environment configuration**:
+                        Edit the wrangler.jsonc file to include the required variables:
+
+                        ```json title="wrangler.jsonc"
+                        {
+                            "vars": {
+                                "testing": "testing-value"
+                            },
+                            "observability": {
+                                "enabled": true
+                            }
+                        }
+                        ```
+                    
+                    4. **Implementation**: Insert the processing logic into the main project file.
+                    
+                    5. **Deployment**:
+
+                        ```bash title="Deploy"
+                        wrangler deploy
+                        ```
+                </Steps>
+            </TabItem>
+        </Tabs>
+    </TabItem>
+    #### Additional Considerations
+    The provided examples are baseline implementations intended to validate connectivity. For production environments, it is recommended to extend these configurations according to the specific requirements of your infrastructure or observability platform.
+</Tabs>
+
+---
+
+[View the full changelog](https://github.com/DumbNoxx/goxe/compare/v1.4.0...v1.5.0)

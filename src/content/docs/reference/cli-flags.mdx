@@ -1,0 +1,30 @@
+---
+title: CLI Flags
+description: Command-line interface options for Goxe.
+---
+import { Aside } from '@astrojs/starlight/components';
+
+Use these flags to control the behavior of the `goxe` binary from your terminal.
+
+## Available Flags
+
+| Flag | Alias | Description |
+| :--- | :--- | :--- |
+| `-b` | `-brew` | Distill and normalize a raw log file into a structured report. |
+| `-v` | `-version` | Show the current version of the program. |
+
+## Usage Examples
+
+### Check Version
+To verify which version of Goxe you are currently running:
+
+```bash title="Terminal"
+goxe -v
+```
+
+### Process Logs
+To distill and normalize a raw log file into a structured report:
+
+```bash title="Terminal"
+goxe -brew path/to/your/logfile.log idLog
+```

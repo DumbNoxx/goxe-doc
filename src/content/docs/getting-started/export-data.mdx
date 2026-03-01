@@ -35,17 +35,19 @@ shipper:
 Goxe sends one JSON object for each detected origin. The structure follows the defined data model to ensure compatibility with the receiver:
 
 ```json title="payload.json"
-{
-  "origin": "server-name",
-  "data": [
-    {
-      "count": 10,
-      "firstSeen": "2024-03-20T10:00:00Z",
-      "lastSeen": "2024-03-20T10:05:00Z",
-      "message": "Processed log message"
-    }
-  ]
-}
+[
+  {
+    "origin": "server-name",
+    "data": [
+      {
+        "count": 10,
+        "firstSeen": "2024-03-20T10:00:00Z",
+        "lastSeen": "2024-03-20T10:05:00Z",
+        "message": "Processed log message"
+      }
+    ]
+  }
+]
 ```
 
 #### Field Specification
