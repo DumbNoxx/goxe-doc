@@ -18,7 +18,7 @@
         pkgs = nixpkgs.legacyPackages.${system};
 
         nativeBuildInputs = [
-          pkgs.nodePackages.pnpm
+          pkgs.bun
           pkgs.nodePackages.typescript
           pkgs.nodePackages.typescript-language-server
         ];

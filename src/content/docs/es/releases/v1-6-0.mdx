@@ -1,0 +1,89 @@
+---
+title: v1.6.0
+sidebar:
+    order: -160
+    badge:
+        text: Última versión
+        variant: success
+description: Goxe v1.6.0 introduce la normalización recursiva de estructuras JSON, integración nativa con Nix Flakes y validación estricta de extensiones de archivos.
+---
+
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
+
+## Mejoras en Goxe v1.6.0
+
+La versión 1.6.0 marca un hito en la flexibilidad del motor de procesamiento de Goxe. Hemos implementado un sistema de **curación recursiva de JSON** que permite desglosar y normalizar objetos anidados complejos, además de estandarizar el entorno de desarrollo mediante **Nix Flakes**.
+
+## Cambios Destacados
+
+- **Normalización Recursiva de JSON**: Nuevo motor de agregación que procesa estructuras anidadas dinámicamente.
+- **Soporte para Nix Flakes**: Inclusión de `flake.nix` para garantizar entornos de desarrollo y builds reproducibles.
+- **Validación Estricta de I/O**: El CLI ahora valida extensiones de archivo (`.log`, `.txt`, `.json`) para prevenir errores de ingesta.
+- **Optimización de Tipado**: Refactorización del `jsonManager` mediante aserciones de tipo para mejorar la velocidad en concurrencia.
+
+---
+
+## Procesamiento de Logs con el CLI
+
+Goxe simplifica la reducción de logs mediante el flag `-b` (o `--brew`). A partir de esta versión, el motor detecta automáticamente la estructura del archivo para aplicar la recursividad si es necesaria.
+
+### Uso del comando
+
+<Steps>
+1. **Preparar el origen**: Asegúrese de que su archivo tenga una extensión válida (`.json`, `.log` o `.txt`).
+2. **Ejecutar la reducción**:
+   
+   ```bash 
+   goxe -b path/to/your/file.json
+   ```
+
+3. **Resultado**: Goxe generará un resumen normalizado, procesando incluso los objetos JSON que se encuentren dentro de otros campos.
+</Steps>
+
+---
+
+## Normalización Recursiva de JSON
+
+Se introduce el `JsonManager`. Esta implementación de la interfaz `File` está diseñada específicamente para el procesamiento de logs estructurados, permitiendo una normalización que va más allá del texto plano.
+
+#### Ejemplo de transformación estructural
+
+**Entrada (JSON anidado):**
+
+```json
+{ 
+ "level": "error",
+ "metadata": { 
+     "service": "auth-api",
+     "details": { 
+         "code": 500,
+         "reason": "timeout"
+     }
+  }
+}
+```
+
+**Firma generada por Goxe (Patrón de análisis):**
+
+```txt 
+ORIGIN: [file-reader]
+- Data: [level:error||metadata:details:code:<NUM>||reason:timeout||||service:auth-api|||] - Count: [1]
+```
+
+**Lógica de Normalización:**
+Goxe identifica patrones volátiles y los reemplaza por placeholders para agrupar logs similares:
+
+- **Detección de Tipos**: Los valores `float64`, `int` y `bool` se normalizan a `<NUM>` y `<BOOL>`.
+- **Identificadores Únicos**: Mediante la función `isId`, los hashes, UUIDs o tokens (strings > 20 caracteres sin espacios) se marcan como `<ID>`.
+- **Determinismo**: Las llaves de los mapas se ordenan alfabéticamente antes de generar el ID para asegurar que el patrón sea consistente.
+
+<Aside type='caution'>
+Esta funcionalidad es exclusiva para archivos con extensión `.json` y se encuentra sujeta a mejoras continuas en el algoritmo de detección.
+</Aside>
+
+<Aside type='tip'>
+Esta arquitectura basada en `json.Decoder` permite procesar flujos masivos de datos (streaming) manteniendo un consumo de memoria mínimo, ya que no carga el archivo completo en el heap.
+</Aside>
+---
+
+[Consultar el historial completo de cambios](https://github.com/DumbNoxx/goxe/compare/v1.5.0...v1.6.0)
